@@ -1,0 +1,27 @@
+name: Daily Auto Commit
+
+on:
+  schedule:
+    - cron: '15 3 * * *'     # This means: every day at 03:15 UTC
+  workflow_dispatch:         # This lets you run it manually (very useful for testing!)
+
+jobs:
+  create-daily-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step created by 24f2001721@ds.study.iitm.ac.in
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0       # Important: get full history
+
+      - name: Make a tiny change every day
+        run: |
+          echo "Daily update: $(date -u '+%Y-%m-%d %H:%M UTC')" >> daily-log.md
+          # ↑ This adds current date & time to a file called daily-log.md
+
+      - name: Commit the change
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Daily automated commit $(date -u '+%Y-%m-%d')
+          file_pattern: daily-log.md
